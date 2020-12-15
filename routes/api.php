@@ -15,6 +15,14 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
+    Route::group([
+        'middleware' => ['can:access dashboard'],
+        'namespace' => 'Dashboard',
+        'prefix' => 'back'
+    ], function () {
+        Route::get('user', 'UserController@index');
+    });
+
     Route::group(['namespace' => 'Api'], function () {
         Route::get('user', 'UserController@index');
         Route::put('user', 'UserController@update');

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Client\UserResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -10,7 +11,7 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
-        return $request->user();
+        return new UserResource($request->user());
     }
 
     public function update(Request $request)
