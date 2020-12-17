@@ -6,17 +6,17 @@ use App\Filters\UserFilters;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UserRequest;
 use App\Http\Resources\Dashboard\UserResourceCollection;
-use App\Models\Role;
+use App\Models\Permission;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
-class UserController extends Controller
+class AdminController extends Controller
 {
     public function index(UserFilters $filters)
     {
         $users = User::filter($filters)
-            ->role(Role::ROLE_MEMBER)
+            ->permission(Permission::ACCESS_DASHBOARD)
             ->orderBy(request()->sortBy, str_boolean(request()->descending) ? 'desc' : 'asc')
             ->paginate(request()->rowsPerPage);
 
@@ -31,7 +31,7 @@ class UserController extends Controller
             'password' => bcrypt($request->password),
         ]);
 
-        $user->assignRole(Role::ROLE_MEMBER);
+        $user->givePermissionTo(Permission::ACCESS_DASHBOARD);
 
         return response()->json([], Response::HTTP_CREATED);
     }

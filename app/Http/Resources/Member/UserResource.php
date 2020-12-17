@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Resources\Client;
+namespace App\Http\Resources\Member;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -18,6 +18,8 @@ class UserResource extends JsonResource
             'uuid' => $this->uuid,
             'name' => $this->name,
             'email' => $this->email,
+            'roles' => $this->getRoleNames(),
+            'permissions' => $this->getPermissionNames()
         ];
     }
 }

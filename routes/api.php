@@ -18,18 +18,27 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::group([
         'middleware' => ['can:access dashboard'],
         'namespace' => 'Dashboard',
-        'prefix' => 'back'
+        'prefix' => 'dashboard'
     ], function () {
-        Route::get('user', 'UserController@index');
+        Route::middleware(['role:root|admin'])->group(function () {
+            Route::apiResource('users/admin', 'AdminController');
+        });
+
+        Route::apiResource('users', 'UserController');
     });
 
+    Route::get('me', 'Auth\AuthController@me');
+
     Route::group(['namespace' => 'Api'], function () {
-        Route::get('user', 'UserController@index');
         Route::put('user', 'UserController@update');
     });
 
-    Route::group(['prefix' => 'auth'], function () {
-        Route::post('logout', 'Auth\AuthController@logout');
+    // mobile
+    Route::group([
+        'namespace' => 'Auth',
+        'prefix' => 'auth'
+    ], function () {
+        Route::post('logout', 'AuthController@logout');
     });
 });
 

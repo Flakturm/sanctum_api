@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Member\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -54,5 +55,10 @@ class AuthController extends Controller
     {
         $request->user()->currentAccessToken()->delete();
         return response()->json([], Response::HTTP_NO_CONTENT);
+    }
+
+    public function me(Request $request)
+    {
+        return new UserResource($request->user());
     }
 }
