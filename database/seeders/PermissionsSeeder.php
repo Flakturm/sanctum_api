@@ -21,13 +21,16 @@ class PermissionsSeeder extends Seeder
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
         // create permissions
-        Permission::create(['name' => ModelsPermission::MANAGE_PERMISSIONS]);
-        Permission::create(['name' => ModelsPermission::ACCESS_DASHBOARD]);
+        Permission::create(['name' => ModelsPermission::BROWSE_DASHBOARD]);
+        Permission::create(['name' => ModelsPermission::ACCESS_USER_PERMISSIONS]);
+        Permission::create(['name' => ModelsPermission::ACCESS_USER_ADMIN]);
+        Permission::create(['name' => ModelsPermission::ACCESS_USER_MEMBERS]);
+        Permission::create(['name' => ModelsPermission::ACCESS_USER_VENDORS]);
 
+        // create roles
         Role::create(['name' => ModelsRole::ROLE_ROOT]);
-        $role = Role::create(['name' => ModelsRole::ROLE_ADMIN]);
-        $role->givePermissionTo(ModelsPermission::ACCESS_DASHBOARD);
-
+        Role::create(['name' => ModelsRole::ROLE_ADMIN]);
         Role::create(['name' => ModelsRole::ROLE_MEMBER]);
+        Role::create(['name' => ModelsRole::ROLE_VENDOR]);
     }
 }

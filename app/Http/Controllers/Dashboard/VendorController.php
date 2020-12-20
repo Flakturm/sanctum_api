@@ -5,20 +5,18 @@ namespace App\Http\Controllers\Dashboard;
 use App\Filters\UserFilters;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UserRequest;
-use App\Http\Resources\Dashboard\UserRoleResource;
 use App\Http\Resources\Dashboard\UserResourceCollection;
-use App\Models\Permission;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Response;
 
-class AdminController extends Controller
+class VendorController extends Controller
 {
     public function index(UserFilters $filters)
     {
         $users = User::filter($filters)
-            ->permission(Permission::BROWSE_DASHBOARD)
+            ->role(Role::ROLE_VENDOR)
             ->orderBy(request()->sortBy, str_boolean(request()->descending) ? 'desc' : 'asc')
-            ->where('id', '<>', request()->user()->id)
             ->paginate(request()->rowsPerPage);
 
         return response()->json(new UserResourceCollection($users), Response::HTTP_OK);
@@ -32,30 +30,32 @@ class AdminController extends Controller
             'password' => bcrypt($request->password),
         ]);
 
-        $user->syncRoles($request->roles);
+        $user->assignRole(Role::ROLE_VENDOR);
 
         return response()->json([], Response::HTTP_CREATED);
     }
 
-    public function show(User $admin)
+    public function show(User $vendor)
     {
-        return response()->json(new UserRoleResource($admin), Response::HTTP_OK);
+        return response()->json($vendor, Response::HTTP_OK);
     }
 
-    public function update(UserRequest $request, User $admin)
+    public function update(UserRequest $request, User $vendor)
     {
-        $admin->update($request->all());
-        $admin->password = bcrypt($request->password);
-        $admin->save();
+        $vendor->update($request->all());
+        $vendor->password = bcrypt($request->password);
+        $vendor->save();
 
-        $admin->syncRoles($request->roles);
+        if ($request->has('member_vendor_toggle') && $request->member_vendor_toggle === true) {
+            $vendor->syncRoles([Role::ROLE_MEMBER]);
+        }
 
         return response()->json([], Response::HTTP_NO_CONTENT);
     }
 
-    public function destroy(User $admin)
+    public function destroy(User $vendor)
     {
-        $admin->delete();
+        $vendor->delete();
         return response()->json([], Response::HTTP_NO_CONTENT);
     }
 }

@@ -39,6 +39,13 @@ class UserFactory extends Factory
         });
     }
 
+    public function vendor()
+    {
+        return $this->afterCreating(function (User $user) {
+            $user->assignRole(Role::ROLE_VENDOR);
+        });
+    }
+
     public function admin()
     {
         return $this->afterCreating(function (User $user) {

@@ -16,15 +16,22 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::group([
-        'middleware' => ['can:access dashboard'],
+        'middleware' => ['can:browse dashboard'],
         'namespace' => 'Dashboard',
         'prefix' => 'dashboard'
     ], function () {
-        Route::middleware(['role:root|admin'])->group(function () {
+        Route::middleware(['can:access users.admin'])->group(function () {
             Route::apiResource('users/admin', 'AdminController');
+            Route::get('roles', 'RoleController@index');
         });
 
-        Route::apiResource('users', 'UserController');
+        Route::middleware(['can:access users.permissions'])->group(function () {
+            Route::apiResource('roles', 'RoleController')->except(['index']);
+            Route::get('permissions', 'PermissionController@index');
+        });
+
+        Route::apiResource('users/members', 'MemberController');
+        Route::apiResource('users/vendors', 'VendorController');
     });
 
     Route::get('me', 'Auth\AuthController@me');

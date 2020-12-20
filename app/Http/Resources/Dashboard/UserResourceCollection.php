@@ -21,7 +21,8 @@ class UserResourceCollection extends ResourceCollection
                     'uuid' => $model->uuid,
                     'name' => $model->name,
                     'email' => $model->email,
-                    'created_at' => $model->created_at->toDateString(),
+                    'roles' => $model->getRoleNames(),
+                    'created_at' => $model->created_at->toDateString()
                 ];
             }),
             'total' => $this->total()

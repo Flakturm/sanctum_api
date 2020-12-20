@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Resources\Member;
+namespace App\Http\Resources\Dashboard;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class UserResource extends JsonResource
+class RoleResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -15,11 +15,8 @@ class UserResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'uuid' => $this->uuid,
             'name' => $this->name,
-            'email' => $this->email,
-            'roles' => $this->getRoleNames(),
-            'permissions' => collect($this->getAllPermissions())->pluck('name')
+            'permissions' => collect($this->permissions)->pluck('name')
         ];
     }
 }
