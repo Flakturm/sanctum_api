@@ -15,5 +15,8 @@ return [
 
     'failed' => 'These credentials do not match our records.',
     'throttle' => 'Too many login attempts. Please try again in :seconds seconds.',
+    'action_denied' => 'Action denied.',
+    'token' => 'Invalid token.',
+    'page' => 'This page is for vendors only.'
 
 ];

@@ -20,17 +20,22 @@ class PermissionsSeeder extends Seeder
         // reset cached roles and permissions
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
-        // create permissions
-        Permission::create(['name' => ModelsPermission::BROWSE_DASHBOARD]);
-        Permission::create(['name' => ModelsPermission::ACCESS_USER_PERMISSIONS]);
-        Permission::create(['name' => ModelsPermission::ACCESS_USER_ADMIN]);
-        Permission::create(['name' => ModelsPermission::ACCESS_USER_MEMBERS]);
-        Permission::create(['name' => ModelsPermission::ACCESS_USER_VENDORS]);
+        if (Permission::count() === 0) {
+            // Seed the default permissions
+            Permission::create(['name' => ModelsPermission::BROWSE_DASHBOARD]);
+            $permissions = ModelsPermission::permissionList();
 
-        // create roles
-        Role::create(['name' => ModelsRole::ROLE_ROOT]);
-        Role::create(['name' => ModelsRole::ROLE_ADMIN]);
-        Role::create(['name' => ModelsRole::ROLE_MEMBER]);
-        Role::create(['name' => ModelsRole::ROLE_VENDOR]);
+            foreach ($permissions as $perms) {
+                Permission::firstOrCreate(['name' => $perms]);
+            }
+        }
+
+        if (Role::count() === 0) {
+            // Seed the default roles
+            $roles = ModelsRole::roleList();
+            foreach ($roles as $role) {
+                $role = Role::create(['name' => $role]);
+            }
+        }
     }
 }

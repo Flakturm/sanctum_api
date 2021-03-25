@@ -2,7 +2,6 @@
 
 namespace App\Filters;
 
-use App\Models\Role;
 use Illuminate\Http\Request;
 
 class UserFilters extends QueryFilters
@@ -15,9 +14,9 @@ class UserFilters extends QueryFilters
         parent::__construct($request);
     }
 
-    public function sort($sort = 'desc')
+    public function sortBy($sort = 'id')
     {
-        return $this->builder->orderBy('id', $sort);
+        return $this->builder->orderBy($sort, str_boolean($this->request->descending) ? 'desc' : 'asc');
     }
 
     public function filter($term)
@@ -25,5 +24,10 @@ class UserFilters extends QueryFilters
         return $this->builder
             ->orWhere('email', 'LIKE', "%$term%")
             ->orWhere('name', 'LIKE', "%$term%");
+    }
+
+    public function trashed()
+    {
+        return $this->builder->onlyTrashed();
     }
 }

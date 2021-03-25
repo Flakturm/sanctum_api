@@ -4,7 +4,8 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Filters\UserFilters;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\UserRequest;
+use App\Http\Requests\Dashboard\UserRequest;
+use App\Http\Resources\Dashboard\UserResource;
 use App\Http\Resources\Dashboard\UserResourceCollection;
 use App\Models\Role;
 use App\Models\User;
@@ -16,7 +17,6 @@ class VendorController extends Controller
     {
         $users = User::filter($filters)
             ->role(Role::ROLE_VENDOR)
-            ->orderBy(request()->sortBy, str_boolean(request()->descending) ? 'desc' : 'asc')
             ->paginate(request()->rowsPerPage);
 
         return response()->json(new UserResourceCollection($users), Response::HTTP_OK);
@@ -28,6 +28,7 @@ class VendorController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => bcrypt($request->password),
+            'active' => $request->active
         ]);
 
         $user->assignRole(Role::ROLE_VENDOR);
@@ -37,7 +38,7 @@ class VendorController extends Controller
 
     public function show(User $vendor)
     {
-        return response()->json($vendor, Response::HTTP_OK);
+        return response()->json(new UserResource($vendor), Response::HTTP_OK);
     }
 
     public function update(UserRequest $request, User $vendor)
@@ -50,6 +51,13 @@ class VendorController extends Controller
             $vendor->syncRoles([Role::ROLE_MEMBER]);
         }
 
+        return response()->json([], Response::HTTP_NO_CONTENT);
+    }
+
+    public function restore($id)
+    {
+        $vendor = User::onlyTrashed()->find($id);
+        $vendor->restore();
         return response()->json([], Response::HTTP_NO_CONTENT);
     }
 

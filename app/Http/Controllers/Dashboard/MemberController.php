@@ -4,7 +4,8 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Filters\UserFilters;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\UserRequest;
+use App\Http\Requests\Dashboard\UserRequest;
+use App\Http\Resources\Dashboard\UserResource;
 use App\Http\Resources\Dashboard\UserResourceCollection;
 use App\Models\Role;
 use App\Models\User;
@@ -16,7 +17,6 @@ class MemberController extends Controller
     {
         $users = User::filter($filters)
             ->role(Role::ROLE_MEMBER)
-            ->orderBy(request()->sortBy, str_boolean(request()->descending) ? 'desc' : 'asc')
             ->paginate(request()->rowsPerPage);
 
         return response()->json(new UserResourceCollection($users), Response::HTTP_OK);
@@ -28,6 +28,7 @@ class MemberController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => bcrypt($request->password),
+            'active' => $request->active
         ]);
 
         $user->assignRole(Role::ROLE_MEMBER);
@@ -37,7 +38,7 @@ class MemberController extends Controller
 
     public function show(User $member)
     {
-        return response()->json($member, Response::HTTP_OK);
+        return response()->json(new UserResource($member), Response::HTTP_OK);
     }
 
     public function update(UserRequest $request, User $member)
@@ -50,6 +51,13 @@ class MemberController extends Controller
             $member->syncRoles([Role::ROLE_VENDOR]);
         }
 
+        return response()->json([], Response::HTTP_NO_CONTENT);
+    }
+
+    public function restore($id)
+    {
+        $member = User::onlyTrashed()->find($id);
+        $member->restore();
         return response()->json([], Response::HTTP_NO_CONTENT);
     }
 

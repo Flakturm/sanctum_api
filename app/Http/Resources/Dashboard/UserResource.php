@@ -4,7 +4,7 @@ namespace App\Http\Resources\Dashboard;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class UserRoleResource extends JsonResource
+class UserResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -19,7 +19,8 @@ class UserRoleResource extends JsonResource
             'name' => $this->name,
             'email' => $this->email,
             'active' => $this->active,
-            'roles' => $this->getRoleNames()
+            'data' => $this->data,
+            'member_vendor_toggle' => false
         ];
     }
 }

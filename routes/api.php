@@ -22,6 +22,8 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     ], function () {
         Route::middleware(['can:access users.admin'])->group(function () {
             Route::apiResource('users/admin', 'AdminController');
+            Route::post('users/admin/{id}/restore', 'AdminController@restore');
+
             Route::get('roles', 'RoleController@index');
         });
 
@@ -30,8 +32,16 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
             Route::get('permissions', 'PermissionController@index');
         });
 
-        Route::apiResource('users/members', 'MemberController');
-        Route::apiResource('users/vendors', 'VendorController');
+        Route::post('users/update-password', 'AdminController@updatePassword');
+
+        Route::middleware(['can:access users.members'])->group(function () {
+            Route::apiResource('users/members', 'MemberController');
+            Route::post('users/members/{id}/restore', 'MemberController@restore');
+        });
+        Route::middleware(['can:access users.vendors'])->group(function () {
+            Route::apiResource('users/vendors', 'VendorController');
+            Route::post('users/vendors/{id}/restore', 'VendorController@restore');
+        });
     });
 
     Route::get('me', 'Auth\AuthController@me');

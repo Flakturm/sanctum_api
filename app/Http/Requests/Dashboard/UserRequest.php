@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Dashboard;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -27,7 +27,7 @@ class UserRequest extends FormRequest
         $password = $id ? 'nullable|string|min:8|max:12' : 'required|string|min:8|max:12';
 
         return [
-            'name' => 'required|string|max:25',
+            'name' => 'required|string|max:20',
             'email' => "required|string|email|max:255|unique:users,email,{$id}",
             'password' => $password
         ];
